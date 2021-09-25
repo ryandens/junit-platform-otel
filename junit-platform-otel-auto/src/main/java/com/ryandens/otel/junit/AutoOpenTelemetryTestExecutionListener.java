@@ -7,11 +7,21 @@ import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestIdentifier;
 import org.junit.platform.launcher.TestPlan;
 
+/**
+ * Auto-registered {@link OpenTelemetryTestExecutionListener} via the {@link
+ * java.util.ServiceLoader} API using the {@link io.opentelemetry.api.trace.Tracer} created and
+ * configured by the {@link
+ * io.opentelemetry.sdk.autoconfigure.OpenTelemetrySdkAutoConfiguration#initialize()} method
+ *
+ * @see OpenTelemetryTestExecutionListener
+ * @see io.opentelemetry.sdk.autoconfigure.OpenTelemetrySdkAutoConfiguration
+ */
 @AutoService(TestExecutionListener.class)
 public final class AutoOpenTelemetryTestExecutionListener implements TestExecutionListener {
 
   private final OpenTelemetryTestExecutionListener inner;
 
+  /** Default constructor, used by {@link java.util.ServiceLoader#load(Class)} */
   public AutoOpenTelemetryTestExecutionListener() {
     inner = new OpenTelemetryTestExecutionListener(OpenTelemetry.SINGLETON.tracer);
   }

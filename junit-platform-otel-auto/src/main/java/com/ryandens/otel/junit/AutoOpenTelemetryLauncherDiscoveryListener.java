@@ -8,11 +8,21 @@ import org.junit.platform.launcher.EngineDiscoveryResult;
 import org.junit.platform.launcher.LauncherDiscoveryListener;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 
+/**
+ * Auto-registered {@link OpenTelemetryLauncherDiscoveryListener} via the {@link
+ * java.util.ServiceLoader} API using the {@link io.opentelemetry.api.trace.Tracer} created and
+ * configured by the {@link
+ * io.opentelemetry.sdk.autoconfigure.OpenTelemetrySdkAutoConfiguration#initialize()} method
+ *
+ * @see OpenTelemetryLauncherDiscoveryListener
+ * @see io.opentelemetry.sdk.autoconfigure.OpenTelemetrySdkAutoConfiguration
+ */
 @AutoService(LauncherDiscoveryListener.class)
 public final class AutoOpenTelemetryLauncherDiscoveryListener implements LauncherDiscoveryListener {
 
   private final OpenTelemetryLauncherDiscoveryListener inner;
 
+  /** Default constructor, used by {@link java.util.ServiceLoader#load(Class)} */
   public AutoOpenTelemetryLauncherDiscoveryListener() {
     this.inner = new OpenTelemetryLauncherDiscoveryListener(OpenTelemetry.SINGLETON.tracer);
   }

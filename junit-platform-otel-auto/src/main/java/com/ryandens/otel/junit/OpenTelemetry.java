@@ -4,10 +4,10 @@ import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.autoconfigure.OpenTelemetrySdkAutoConfiguration;
 
-public enum OpenTelemetry {
+enum OpenTelemetry {
   SINGLETON;
 
-  public final Tracer tracer;
+  final Tracer tracer;
 
   OpenTelemetry() {
     final OpenTelemetrySdk otelSdk = OpenTelemetrySdkAutoConfiguration.initialize(false);

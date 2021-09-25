@@ -23,6 +23,11 @@ public final class OpenTelemetryTestExecutionListener implements TestExecutionLi
   private final ConcurrentHashMap<String, Span> testSpans;
   private final AtomicReference<Span> testPlanSpan = new AtomicReference<>();
 
+  /**
+   * Constructor intended for manual instantiation and registration with the JUnit Platform
+   *
+   * @param tracer for generating OpenTelemetry {@link Span}s
+   */
   public OpenTelemetryTestExecutionListener(Tracer tracer) {
     this.tracer = tracer;
     testSpans = new ConcurrentHashMap<>(32);

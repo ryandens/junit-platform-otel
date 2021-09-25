@@ -24,6 +24,11 @@ public final class OpenTelemetryLauncherDiscoveryListener implements LauncherDis
   private final AtomicReference<Span> launcherDiscoverySpan = new AtomicReference<>();
   private final Map<UniqueId, Span> engineDiscoverySpans = new ConcurrentHashMap<>();
 
+  /**
+   * Constructor intended for manual instantiation and registration with the JUnit Platform
+   *
+   * @param tracer for generating OpenTelemetry {@link Span}s
+   */
   public OpenTelemetryLauncherDiscoveryListener(Tracer tracer) {
     this.tracer = tracer;
   }
