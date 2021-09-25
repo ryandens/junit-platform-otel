@@ -31,6 +31,10 @@ dependencies {
   testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
+tasks.withType<JavaCompile> {
+  options.compilerArgs.addAll(listOf("-Xlint:all", "-Xlint:-processing", "-Xlint:-serial", "-Werror"))
+}
+
 tasks.test {
   useJUnitPlatform()
 }
