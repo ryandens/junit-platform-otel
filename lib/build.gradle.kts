@@ -1,6 +1,5 @@
 plugins {
     id("com.ryandens.java-library-conventions")
-    id("nebula.maven-publish")
 }
 
 dependencies {
