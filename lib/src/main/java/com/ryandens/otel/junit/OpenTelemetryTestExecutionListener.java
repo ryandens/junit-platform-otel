@@ -1,7 +1,11 @@
 package com.ryandens.otel.junit;
 
+import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.api.trace.TracerProvider;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestIdentifier;
@@ -16,20 +20,32 @@ public final class OpenTelemetryTestExecutionListener implements TestExecutionLi
 
   private final Tracer tracer;
   private final TracerProvider tracerProvider;
+  private final ConcurrentHashMap<String, Span> testSpans;
+  private final AtomicReference<Span> testPlanSpan = new AtomicReference<>();
 
   public OpenTelemetryTestExecutionListener(Tracer tracer, TracerProvider tracerProvider) {
     this.tracer = tracer;
     this.tracerProvider = tracerProvider;
+    testSpans = new ConcurrentHashMap<>(32);
   }
 
   @Override
   public void testPlanExecutionStarted(TestPlan testPlan) {
-    TestExecutionListener.super.testPlanExecutionStarted(testPlan);
+    testPlanSpan.set(
+        tracer
+            .spanBuilder("junit-test-suite")
+            .setAttribute("junit.contains.tests", testPlan.containsTests())
+            .setAttribute(
+                "junit.engine.names",
+                testPlan.getRoots().stream()
+                    .map(TestIdentifier::getDisplayName)
+                    .collect(Collectors.joining(", ")))
+            .startSpan());
   }
 
   @Override
   public void testPlanExecutionFinished(TestPlan testPlan) {
-    TestExecutionListener.super.testPlanExecutionFinished(testPlan);
+    testPlanSpan.getAndSet(null).end();
   }
 
   @Override
