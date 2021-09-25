@@ -1,7 +1,11 @@
 plugins {
     `java-library`
     id("com.diffplug.spotless") version "5.15.1"
+    id("nebula.maven-publish")
 }
+
+group = "com.ryandens"
+version = "0.1.0"
 
 repositories {
     mavenCentral()
