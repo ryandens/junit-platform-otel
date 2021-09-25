@@ -15,5 +15,11 @@ public enum OpenTelemetry {
     final OpenTelemetrySdk otelSdk = OpenTelemetrySdkAutoConfiguration.initialize(false);
     tracer = otelSdk.getTracer("junit-extension");
     tracerProvider = otelSdk.getTracerProvider();
+    Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+      @Override
+      public void run() {
+        otelSdk.getSdkTracerProvider().forceFlush();
+      }
+    }));
   }
 }
