@@ -13,9 +13,7 @@ public final class AutoOpenTelemetryTestExecutionListener implements TestExecuti
   private final OpenTelemetryTestExecutionListener inner;
 
   public AutoOpenTelemetryTestExecutionListener() {
-    inner =
-        new OpenTelemetryTestExecutionListener(
-            OpenTelemetry.SINGLETON.tracer, OpenTelemetry.SINGLETON.tracerProvider);
+    inner = new OpenTelemetryTestExecutionListener(OpenTelemetry.SINGLETON.tracer);
   }
 
   @Override

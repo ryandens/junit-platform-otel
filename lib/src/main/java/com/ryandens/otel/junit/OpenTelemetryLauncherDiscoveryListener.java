@@ -2,7 +2,6 @@ package com.ryandens.otel.junit;
 
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
-import io.opentelemetry.api.trace.TracerProvider;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -22,13 +21,11 @@ import org.junit.platform.launcher.LauncherDiscoveryRequest;
 public final class OpenTelemetryLauncherDiscoveryListener implements LauncherDiscoveryListener {
 
   private final Tracer tracer;
-  private final TracerProvider tracerProvider;
   private final AtomicReference<Span> launcherDiscoverySpan = new AtomicReference<>();
   private final Map<UniqueId, Span> engineDiscoverySpans = new ConcurrentHashMap<>();
 
-  public OpenTelemetryLauncherDiscoveryListener(Tracer tracer, TracerProvider tracerProvider) {
+  public OpenTelemetryLauncherDiscoveryListener(Tracer tracer) {
     this.tracer = tracer;
-    this.tracerProvider = tracerProvider;
   }
 
   @Override

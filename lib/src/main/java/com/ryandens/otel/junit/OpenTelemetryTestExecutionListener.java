@@ -3,7 +3,6 @@ package com.ryandens.otel.junit;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
-import io.opentelemetry.api.trace.TracerProvider;
 import io.opentelemetry.context.Context;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -21,13 +20,11 @@ import org.junit.platform.launcher.TestPlan;
 public final class OpenTelemetryTestExecutionListener implements TestExecutionListener {
 
   private final Tracer tracer;
-  private final TracerProvider tracerProvider;
   private final ConcurrentHashMap<String, Span> testSpans;
   private final AtomicReference<Span> testPlanSpan = new AtomicReference<>();
 
-  public OpenTelemetryTestExecutionListener(Tracer tracer, TracerProvider tracerProvider) {
+  public OpenTelemetryTestExecutionListener(Tracer tracer) {
     this.tracer = tracer;
-    this.tracerProvider = tracerProvider;
     testSpans = new ConcurrentHashMap<>(32);
   }
 

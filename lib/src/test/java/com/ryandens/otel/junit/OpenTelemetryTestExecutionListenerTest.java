@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.trace.Tracer;
-import io.opentelemetry.api.trace.TracerProvider;
 import io.opentelemetry.sdk.testing.junit5.OpenTelemetryExtension;
 import io.opentelemetry.sdk.trace.data.StatusData;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -36,11 +35,8 @@ final class OpenTelemetryTestExecutionListenerTest {
   @BeforeEach
   void beforeEach() {
     final Tracer tracer = otelTesting.getOpenTelemetry().getTracer("test-tracer");
-    final TracerProvider tracerProvider = otelTesting.getOpenTelemetry().getTracerProvider();
-    openTelemetryTestExecutionListener =
-        new OpenTelemetryTestExecutionListener(tracer, tracerProvider);
-    openTelemetryLauncherDiscoveryListener =
-        new OpenTelemetryLauncherDiscoveryListener(tracer, tracerProvider);
+    openTelemetryTestExecutionListener = new OpenTelemetryTestExecutionListener(tracer);
+    openTelemetryLauncherDiscoveryListener = new OpenTelemetryLauncherDiscoveryListener(tracer);
   }
 
   @Test

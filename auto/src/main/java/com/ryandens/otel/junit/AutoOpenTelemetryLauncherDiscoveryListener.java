@@ -14,9 +14,7 @@ public final class AutoOpenTelemetryLauncherDiscoveryListener implements Launche
   private final OpenTelemetryLauncherDiscoveryListener inner;
 
   public AutoOpenTelemetryLauncherDiscoveryListener() {
-    this.inner =
-        new OpenTelemetryLauncherDiscoveryListener(
-            OpenTelemetry.SINGLETON.tracer, OpenTelemetry.SINGLETON.tracerProvider);
+    this.inner = new OpenTelemetryLauncherDiscoveryListener(OpenTelemetry.SINGLETON.tracer);
   }
 
   @Override
