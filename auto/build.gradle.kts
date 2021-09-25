@@ -1,6 +1,6 @@
 plugins {
     `java-library`
-    id("com.diffplug.spotless") version "5.15.1"
+    id("com.diffplug.spotless")
     id("nebula.maven-publish")
 }
 
