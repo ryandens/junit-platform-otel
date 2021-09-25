@@ -1,8 +1,10 @@
 package com.ryandens.otel.junit;
 
 import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.api.trace.TracerProvider;
+import io.opentelemetry.context.Context;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -50,12 +52,47 @@ public final class OpenTelemetryTestExecutionListener implements TestExecutionLi
 
   @Override
   public void executionStarted(TestIdentifier testIdentifier) {
-    TestExecutionListener.super.executionStarted(testIdentifier);
+    final String spanName;
+    final String attributeName;
+    if (testIdentifier.isTest()) {
+      spanName = "Test";
+      attributeName = "junit.test.name";
+    } else if (testIdentifier.isContainer()) {
+      spanName = "JUnit Jupiter Test Container";
+      attributeName = "junit.container.name";
+    } else {
+      spanName = "Unknown";
+      attributeName = "junit.unknown.name";
+    }
+    final Span parentSpan =
+        testIdentifier.getParentId().map(testSpans::get).orElse(testPlanSpan.get());
+    testSpans.put(
+        testIdentifier.getUniqueId(),
+        tracer
+            .spanBuilder(spanName)
+            .setParent(Context.current().with(parentSpan))
+            .setAttribute(attributeName, testIdentifier.getDisplayName())
+            .setAttribute("junit.unique.id", testIdentifier.getUniqueId())
+            .startSpan());
   }
 
   @Override
   public void executionFinished(
       TestIdentifier testIdentifier, TestExecutionResult testExecutionResult) {
-    TestExecutionListener.super.executionFinished(testIdentifier, testExecutionResult);
+    final Span span =
+        testSpans
+            .remove(testIdentifier.getUniqueId())
+            .setStatus(
+                TestExecutionResult.Status.SUCCESSFUL.equals(testExecutionResult.getStatus())
+                    ? StatusCode.OK
+                    : StatusCode.ERROR)
+            .setAttribute("junit.status", testExecutionResult.getStatus().name());
+    if (testExecutionResult.getThrowable().isPresent()) {
+      span.setAttribute(
+          "junit.exception.class", testExecutionResult.getThrowable().get().getClass().getName());
+      span.setAttribute(
+          "junit.exception.message", testExecutionResult.getThrowable().get().getMessage());
+    }
+    span.end();
   }
 }
