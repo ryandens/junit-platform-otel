@@ -4,7 +4,6 @@ plugins {
 }
 
 dependencies {
-    implementation(platform("io.opentelemetry:opentelemetry-bom:1.6.0"))
     compileOnly("io.opentelemetry:opentelemetry-api")
     compileOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("io.opentelemetry:opentelemetry-sdk-testing")
