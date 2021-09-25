@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    testRuntimeOnly(project(":auto"))
+    testRuntimeOnly(project(":junit-platform-otel-auto"))
 }
 
 tasks.test {
