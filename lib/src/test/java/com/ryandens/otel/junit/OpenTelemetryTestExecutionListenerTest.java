@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.api.trace.TracerProvider;
 import io.opentelemetry.sdk.testing.junit5.OpenTelemetryExtension;
@@ -14,6 +16,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.engine.JupiterTestEngine;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
+import org.junit.platform.launcher.EngineDiscoveryResult;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import org.junit.platform.launcher.LauncherSession;
 import org.junit.platform.launcher.TestExecutionListener;
@@ -86,14 +89,41 @@ final class OpenTelemetryTestExecutionListenerTest {
 
     otelTesting
         .assertTraces()
-        .hasSize(2)
+        .hasSize(3)
         .hasTracesSatisfyingExactly(
             traceAssert ->
                 traceAssert.hasSpansSatisfyingExactly(
-                    spanAssert -> spanAssert.hasName("junit-engine-discovery")),
+                    spanAssert ->
+                        spanAssert
+                            .hasName("junit-engine-discovery")
+                            .hasAttributes(
+                                Attributes.of(
+                                    AttributeKey.stringKey("junit.discovery.engine.result"),
+                                    EngineDiscoveryResult.Status.SUCCESSFUL.name(),
+                                    AttributeKey.stringKey("junit.discovery.engine.id"),
+                                    "[engine:junit-jupiter]"))),
             traceAssert ->
                 traceAssert.hasSpansSatisfyingExactly(
-                    spanAssert -> spanAssert.hasName("junit-launcher-discovery")));
+                    spanAssert ->
+                        spanAssert
+                            .hasName("junit-launcher-discovery")
+                            .hasAttributes(
+                                Attributes.of(
+                                    AttributeKey.longKey("junit.discovery.launcher.selectors"),
+                                    1L,
+                                    AttributeKey.longKey("junit.discovery.launcher.filters"),
+                                    0L))),
+            traceAssert ->
+                traceAssert.hasSpansSatisfyingExactly(
+                    spanAssert ->
+                        spanAssert
+                            .hasName("junit-test-suite")
+                            .hasAttributes(
+                                Attributes.of(
+                                    AttributeKey.booleanKey("junit.contains.tests"),
+                                    true,
+                                    AttributeKey.stringKey("junit.engine.names"),
+                                    "JUnit Jupiter"))));
   }
 
   static final class ExampleFoo {
