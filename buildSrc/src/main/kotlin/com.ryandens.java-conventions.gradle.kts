@@ -17,7 +17,9 @@ spotless {
 }
 
 dependencies {
-  testImplementation(platform("org.junit:junit-bom:5.8.1"))
+  val junitVersion = "5.8.1"
+  compileOnly(enforcedPlatform("org.junit:junit-bom:$junitVersion"))
+  testImplementation(enforcedPlatform("org.junit:junit-bom:$junitVersion"))
   testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
