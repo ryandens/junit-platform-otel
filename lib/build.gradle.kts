@@ -29,5 +29,7 @@ dependencies {
 }
 
 tasks.test {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        excludeTags("testkit")
+    }
 }
