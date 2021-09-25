@@ -1,7 +1,6 @@
 package com.ryandens.otel.junit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.opentelemetry.api.common.AttributeKey;
@@ -9,8 +8,11 @@ import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.api.trace.TracerProvider;
 import io.opentelemetry.sdk.testing.junit5.OpenTelemetryExtension;
+import io.opentelemetry.sdk.trace.data.StatusData;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.engine.JupiterTestEngine;
@@ -84,8 +86,8 @@ final class OpenTelemetryTestExecutionListenerTest {
       session.getLauncher().execute(discoveryRequest);
     }
 
-    assertEquals(0, failedCount.get());
-    assertEquals(3, successCount.get());
+    assertEquals(1, failedCount.get());
+    assertEquals(2, successCount.get());
 
     otelTesting
         .assertTraces()
@@ -123,9 +125,74 @@ final class OpenTelemetryTestExecutionListenerTest {
                                     AttributeKey.booleanKey("junit.contains.tests"),
                                     true,
                                     AttributeKey.stringKey("junit.engine.names"),
-                                    "JUnit Jupiter"))));
+                                    "JUnit Jupiter")),
+                    spanAssert ->
+                        spanAssert
+                            .hasName("JUnit Jupiter Test Container")
+                            .hasStatus(StatusData.ok())
+                            .hasAttributes(
+                                Attributes.of(
+                                    AttributeKey.stringKey("junit.container.name"),
+                                    "JUnit Jupiter",
+                                    AttributeKey.stringKey("junit.unique.id"),
+                                    "[engine:junit-jupiter]",
+                                    AttributeKey.stringKey("junit.status"),
+                                    "SUCCESSFUL")),
+                    spanAssert ->
+                        spanAssert
+                            .hasName("JUnit Jupiter Test Container")
+                            .hasStatus(StatusData.ok())
+                            .hasAttributes(
+                                Attributes.of(
+                                    AttributeKey.stringKey("junit.container.name"),
+                                    "OpenTelemetryTestExecutionListenerTest$ExampleFoo",
+                                    AttributeKey.stringKey("junit.unique.id"),
+                                    "[engine:junit-jupiter]/[class:com.ryandens.otel.junit.OpenTelemetryTestExecutionListenerTest$ExampleFoo]",
+                                    AttributeKey.stringKey("junit.status"),
+                                    "SUCCESSFUL")),
+                    spanAssert ->
+                        spanAssert
+                            .hasName("Test")
+                            .hasStatus(StatusData.ok())
+                            .hasAttributes(
+                                Attributes.of(
+                                    AttributeKey.stringKey("junit.test.name"),
+                                    "fooLong()",
+                                    AttributeKey.stringKey("junit.unique.id"),
+                                    "[engine:junit-jupiter]/[class:com.ryandens.otel.junit.OpenTelemetryTestExecutionListenerTest$ExampleFoo]/[method:fooLong()]",
+                                    AttributeKey.stringKey("junit.status"),
+                                    "SUCCESSFUL")),
+                    spanAssert ->
+                        spanAssert
+                            .hasName("Test")
+                            .hasStatus(StatusData.ok())
+                            .hasAttributes(
+                                Attributes.of(
+                                    AttributeKey.stringKey("junit.test.name"),
+                                    "fooA()",
+                                    AttributeKey.stringKey("junit.unique.id"),
+                                    "[engine:junit-jupiter]/[class:com.ryandens.otel.junit.OpenTelemetryTestExecutionListenerTest$ExampleFoo]/[method:fooA()]",
+                                    AttributeKey.stringKey("junit.status"),
+                                    "SUCCESSFUL")),
+                    spanAssert ->
+                        spanAssert
+                            .hasName("Test")
+                            .hasStatus(StatusData.error())
+                            .hasAttributes(
+                                Attributes.of(
+                                    AttributeKey.stringKey("junit.test.name"),
+                                    "fooB()",
+                                    AttributeKey.stringKey("junit.unique.id"),
+                                    "[engine:junit-jupiter]/[class:com.ryandens.otel.junit.OpenTelemetryTestExecutionListenerTest$ExampleFoo]/[method:fooB()]",
+                                    AttributeKey.stringKey("junit.status"),
+                                    TestExecutionResult.Status.FAILED.name(),
+                                    AttributeKey.stringKey("junit.exception.message"),
+                                    "failure!",
+                                    AttributeKey.stringKey("junit.exception.class"),
+                                    "org.opentest4j.AssertionFailedError"))));
   }
 
+  @Tag("testkit")
   static final class ExampleFoo {
 
     @Test
@@ -135,12 +202,12 @@ final class OpenTelemetryTestExecutionListenerTest {
 
     @Test
     void fooB() {
-      assertFalse(false);
+      Assertions.fail("failure!");
     }
 
     @Test
     void fooLong() throws InterruptedException {
-      Thread.sleep(3000);
+      Thread.sleep(2000);
     }
   }
 }
