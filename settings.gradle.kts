@@ -9,5 +9,6 @@
 
 rootProject.name = "otel-junit-extension"
 include("auto")
+include("dependencyManagement")
 include("lib")
 include("example")

@@ -1,6 +1,6 @@
 plugins {
   java
-  id("com.diffplug.spotless")
+  id("com.ryandens.base")
 }
 
 repositories {
@@ -11,15 +11,23 @@ spotless {
   java {
     googleJavaFormat()
   }
-  kotlinGradle {
-    ktlint()
-  }
+}
+
+val dependencyManagement by configurations.creating {
+  isCanBeConsumed = false
+  isCanBeResolved = false
+  isVisible = false
 }
 
 dependencies {
-  val junitVersion = "5.8.1"
-  compileOnly(enforcedPlatform("org.junit:junit-bom:$junitVersion"))
-  testImplementation(enforcedPlatform("org.junit:junit-bom:$junitVersion"))
+  dependencyManagement(platform(project(":dependencyManagement")))
+  afterEvaluate {
+    configurations.configureEach {
+      if (isCanBeResolved && !isCanBeConsumed) {
+        extendsFrom(dependencyManagement)
+      }
+    }
+  }
   testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
