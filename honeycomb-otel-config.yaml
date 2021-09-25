@@ -1,0 +1,27 @@
+receivers:
+  otlp:
+    protocols:
+      grpc: # on port 4317
+
+processors:
+  batch:
+
+exporters:
+  otlp:
+    endpoint: "api.honeycomb.io:443"
+    headers:
+      "x-honeycomb-team": "${X_HONEYCOMB_TEAM}"
+      "x-honeycomb-dataset": "junit-example"
+
+extensions:
+  health_check:
+  pprof:
+  zpages:
+
+service:
+  extensions: [health_check, pprof, zpages]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp]
