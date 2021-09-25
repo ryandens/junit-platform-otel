@@ -4,6 +4,9 @@ plugins {
 }
 
 spotless {
+    java {
+        googleJavaFormat()
+    }
     kotlinGradle {
         ktlint()
     }
