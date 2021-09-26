@@ -1,4 +1,6 @@
 # JUnit Platform OpenTelemetry Tracing
+![Build](https://github.com/ryandens/junit-platform-otel/workflows/Build/badge.svg?branch=main)
+
 Implementations of JUnit Platform extension points for tracing of JUnit test suites with OpenTelemetry
 
 
