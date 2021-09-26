@@ -2,6 +2,12 @@ plugins {
     id("com.ryandens.java-library-publish-conventions")
 }
 
+description = """
+  Module which auto-registers the com.ryandens:junit-platform-otel-api modules 
+  with the JUnit Engine and uses the OpenTelemetry auto-configured SDK for 
+  tracing.
+""".trimIndent()
+
 dependencies {
     val autoServiceVersion = "1.0"
     compileOnly("com.google.auto.service", "auto-service-annotations", autoServiceVersion)
