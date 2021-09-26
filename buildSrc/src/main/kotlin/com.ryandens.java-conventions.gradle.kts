@@ -33,6 +33,7 @@ dependencies {
 
 tasks.withType<JavaCompile> {
   options.compilerArgs.addAll(listOf("-Xlint:all", "-Xlint:-processing", "-Xlint:-serial", "-Werror"))
+  options.release.set(11)
 }
 
 tasks.test {
