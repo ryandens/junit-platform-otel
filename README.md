@@ -9,6 +9,40 @@ Implementations of JUnit Platform extension points for tracing of JUnit test sui
 - [junit-team/junit5/junit-platform-jfr](https://github.com/junit-team/junit5/tree/main/junit-platform-jfr)
 
 
+## Usage
+
+
+### Auto registration
+To automatically register the JUnit Platform `LauncherDiscoveryListener` and `TestExecutionListener` created by this 
+project, simply add the `junit-platform-otel-auto` module as a runtime dependency of your test suite:
+
+```kotlin
+dependencies {
+  testRuntimeOnly("com.ryandens:junit-platform-otel-auto:0.1.0")
+}
+```
+
+To configure the OpenTelemetry SDK used by this module, refer to the [OpenTelemetry SDK AutoConfigure Extension 
+documentation](https://github.com/open-telemetry/opentelemetry-java/tree/main/sdk-extensions/autoconfigure).
+
+By default, this module expects an OpenTelemetry collector to be listening on `localhost:4317`, but this can be easily
+configured with the `OTEL_EXPORTER_OTLP_ENDPOINT` environment variable read by the OpenTelemetry AutoConfigure 
+Extension. See [Running the example](#running-the-example) for easy instructions to run a collector locally.
+
+
+### Manual registration
+If you would like to manually instantiate the JUnit platform extension points, you must add the 
+`junit-platform-otel-api` module as a runtime dependency of your test suite:
+
+```kotlin
+dependencies {
+  testImplementation("com.ryandens:junit-platform-otel-api:0.1.0")
+}
+```
+
+Then, follow directions for manual registration of extension points via the 
+[JUnit Platform Launcher API](https://junit.org/junit5/docs/current/user-guide/#launcher-api-launcher-config).
+
 ## Running the example
 
 This project includes an example test suite for you to try it out and see how it 
