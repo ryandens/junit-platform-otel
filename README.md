@@ -49,3 +49,9 @@ Example:
 ```bash
 OTEL_EXPORTER_OTLP_ENDPOINT=http://my.customm.host:4317 ./gradlew :example:test
 ```
+
+### 🚀 Releasing
+
+1. Make sure the `sonatypeUsername` and `sonatypePassword` properties are set.
+1. Make sure the `signing.keyId`, `signing.password`, and `signing.secretKeyRingFile` properties are set
+1. `./gradlew build signNebulaPublication publishNebulaPublicationToSonatypeRepository closeAndReleaseSonatypeStagingRepository`
