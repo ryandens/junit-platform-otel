@@ -8,8 +8,10 @@ buildscript {
     mavenCentral()
   }
 }
-group = "com.ryandens"
-version = "0.1.0"
+allprojects {
+  group = "com.ryandens"
+  version = "0.1.0"
+}
 
 nexusPublishing {
   repositories {
